@@ -7,7 +7,7 @@ pipeline {
   stages {
     stage('Checkout Source') {
       steps {
-        git 'https://github.com/AuroobaParker1/jenkinsApplication.git'
+        git branch: 'main', url: 'https://<token>@github.com/AuroobaParker1/jenkinsApplication.git'
       }
     }
     stage('Build') {
