@@ -12,8 +12,8 @@ spec:
       labels:
         app: jenkins
     spec:
-    containers:
-      - name: jenkins
-        image: auroobaparker/jenkins-application:latest  # Specify the image you want to deploy
-        ports:
-        - containerPort: 8080
+      containers:
+        - name: jenkins
+          image: auroobaparker/jenkins-application:latest # Specify the image you want to deploy
+          ports:
+            - containerPort: 3000
