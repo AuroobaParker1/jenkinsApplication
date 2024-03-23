@@ -23,7 +23,7 @@ pipeline {
            }
       steps{
         script {
-          docker.withRegistry( '', registryCredential ) {
+          withCredentials([usernamePassword(credentialsId: '8ce1ad5a-4806-4f4d-b259-b22f9df7f851', passwordVariable: 'admin@123', usernameVariable: 'auroobaparker')]){
             dockerImage.push("latest")
           }
         }
