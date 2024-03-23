@@ -15,12 +15,15 @@ pipeline {
                 checkout scm
                 
                 // Build your application (replace 'your-build-command' with your actual build command)
-                container('docker') {
-                    sh 'docker build -t ${DOCKER_REGISTRY}/jenkins-application:latest .'
+                script {
+                    if (isUnix()) {
+                        sh 'docker build -t ${DOCKER_REGISTRY}/jenkins-application:latest .'
+                    } else {
+                        bat 'docker build -t ${DOCKER_REGISTRY}/jenkins-application:latest .'
+                    }
                 }
             }
         }
-        
         
         stage('Dockerize') {
             steps {
@@ -37,18 +40,20 @@ pipeline {
             steps {
                 // Deploy your application to Kubernetes
                 script {
-                    // Configure kubectl
-                    container('kubectl') {
-                        sh 'kubectl config set-cluster ${KUBE_CLUSTER} --server=https://172.27.96.179:8443 '
+                    if (isUnix()) {
+                        sh 'kubectl config set-cluster ${KUBE_CLUSTER} --server=https://172.27.96.179:8443'
                         sh 'kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=user'
                         sh 'kubectl config use-context ${KUBE_CLUSTER}'
-                        
-                        // Deploy to Kubernetes
                         sh 'kubectl apply -f kubernetes/deployment.yaml -n ${KUBE_NAMESPACE}'
                         sh 'kubectl apply -f kubernetes/service.yaml -n ${KUBE_NAMESPACE}'
-                        
-                        // Wait for deployment to finish
                         sh 'kubectl rollout status deployment/jenkins-deployment -n ${KUBE_NAMESPACE}'
+                    } else {
+                        bat 'kubectl config set-cluster ${KUBE_CLUSTER} --server=https://172.27.96.179:8443'
+                        bat 'kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=user'
+                        bat 'kubectl config use-context ${KUBE_CLUSTER}'
+                        bat 'kubectl apply -f kubernetes/deployment.yaml -n ${KUBE_NAMESPACE}'
+                        bat 'kubectl apply -f kubernetes/service.yaml -n ${KUBE_NAMESPACE}'
+                        bat 'kubectl rollout status deployment/jenkins-deployment -n ${KUBE_NAMESPACE}'
                     }
                 }
             }
