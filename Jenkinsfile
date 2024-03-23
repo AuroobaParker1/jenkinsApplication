@@ -32,8 +32,8 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-          kubernetesDeploy(configs: "web-application.yaml", 
-                                         "load-balancer.yaml")
+          kubernetesDeploy(configs: "k8/web-application.yaml", 
+                                         "k8/load-balancer.yaml")
         }
       }
     }
