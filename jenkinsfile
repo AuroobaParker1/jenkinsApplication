@@ -15,7 +15,9 @@ pipeline {
                 checkout scm
                 
                 // Build your application (replace 'your-build-command' with your actual build command)
-                sh 'docker build -t ${DOCKER_REGISTRY}/jenkins-application:latest .'
+                container('docker') {
+                    sh 'docker build -t ${DOCKER_REGISTRY}/jenkins-application:latest .'
+                }
             }
         }
         
@@ -36,16 +38,18 @@ pipeline {
                 // Deploy your application to Kubernetes
                 script {
                     // Configure kubectl
-                    sh 'kubectl config set-cluster ${KUBE_CLUSTER} --server=https://172.27.96.179:8443 '
-                    sh 'kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=user'
-                    sh 'kubectl config use-context ${KUBE_CLUSTER}'
-                    
-                    // Deploy to Kubernetes
-                    sh 'kubectl apply -f kubernetes/deployment.yaml -n ${KUBE_NAMESPACE}'
-                    sh 'kubectl apply -f kubernetes/service.yaml -n ${KUBE_NAMESPACE}'
-                    
-                    // Wait for deployment to finish
-                    sh 'kubectl rollout status deployment/jenkins-deployment -n ${KUBE_NAMESPACE}'
+                    container('kubectl') {
+                        sh 'kubectl config set-cluster ${KUBE_CLUSTER} --server=https://172.27.96.179:8443 '
+                        sh 'kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=user'
+                        sh 'kubectl config use-context ${KUBE_CLUSTER}'
+                        
+                        // Deploy to Kubernetes
+                        sh 'kubectl apply -f kubernetes/deployment.yaml -n ${KUBE_NAMESPACE}'
+                        sh 'kubectl apply -f kubernetes/service.yaml -n ${KUBE_NAMESPACE}'
+                        
+                        // Wait for deployment to finish
+                        sh 'kubectl rollout status deployment/jenkins-deployment -n ${KUBE_NAMESPACE}'
+                    }
                 }
             }
         }
