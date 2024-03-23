@@ -27,11 +27,11 @@ pipeline {
                         def kubeconfig = findKubeconfig()
                         withEnv(["KUBECONFIG=${kubeconfig}"]) {
                             // Apply deployment and service YAML files
-                            sh 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
-                            sh 'kubectl apply -f kubernetes/service.yaml --context minikube'
+                            bat 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
+                            bat 'kubectl apply -f kubernetes/service.yaml --context minikube'
                             
                             // Check rollout status
-                            sh 'kubectl rollout status deployment/jenkins-deployment --context minikube'
+                            bat 'kubectl rollout status deployment/jenkins-deployment --context minikube'
                         }
                     } catch (err) {
                         // If any error occurs, catch and print the error message
