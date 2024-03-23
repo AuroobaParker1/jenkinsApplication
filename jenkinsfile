@@ -1,12 +1,5 @@
 pipeline {
     agent any
-    
-    environment {
-        // Define environment variables for your container registry and Kubernetes cluster
-        DOCKER_REGISTRY = 'https://hub.docker.com/repository/docker/auroobaparker'
-        KUBE_NAMESPACE = 'default'
-        KUBE_CLUSTER = 'minikube'
-    }
 
     stages {
         stage('Build') {
@@ -34,9 +27,9 @@ pipeline {
                         sh 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
                         sh 'kubectl config set-context minikube --cluster=minikube --user=user'
                         sh 'kubectl config use-context minikube'
-                        sh 'kubectl apply -f kubernetes/deployment.yaml -n default'
-                        sh 'kubectl apply -f kubernetes/service.yaml -n default'
-                        sh 'kubectl rollout status deployment/jenkins-deployment -n default'
+                        sh 'kubectl apply -f kubernetes/deployment.yaml -n ,minikube'
+                        sh 'kubectl apply -f kubernetes/service.yaml -n minikube'
+                        sh 'kubectl rollout status deployment/jenkins-deployment -n minikube'
                     } else {
                         bat 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
                         bat 'kubectl config set-context minikube --cluster=${KUBE_CLUSTER} --user=user'
