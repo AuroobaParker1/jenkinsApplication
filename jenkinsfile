@@ -27,15 +27,14 @@ pipeline {
                         sh 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
                         sh 'kubectl config set-context minikube --cluster=minikube --user=minikube'
                         sh 'kubectl config use-context minikube'
-                        sh 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
-                        sh 'kubectl apply -f kubernetes/service.yaml --context minikube'
-                        sh 'kubectl rollout status deployment/jenkins-deployment --context minikube'
+                        sh 'kubectl apply -f kubernetes/deployment.yaml'
+                        sh 'kubectl rollout status deployment/jenkins-deployment'
                     } else {
                         bat 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
                         bat 'kubectl config set-context minikube --cluster=minikube --user=minikube'
                         bat 'kubectl config use-context minikube'
-                        bat 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
-                        bat 'kubectl rollout status deployment/jenkins-deployment --context minikube'
+                        bat 'kubectl apply -f kubernetes/deployment.yaml'
+                        bat 'kubectl rollout status deployment/jenkins-deployment'
                     }
                 }
             }
