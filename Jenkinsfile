@@ -1,6 +1,6 @@
 pipeline {
   environment {
-    dockerimagename = "jenkins-kubernetes-deployment"
+    dockerimagename = "auroobaparker/jenkinsapplication"
     dockerImage = ""
   }
   agent any
