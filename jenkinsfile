@@ -51,7 +51,7 @@ def findKubeconfig() {
     if (isUnix()) {
         homeDir = sh(script: 'echo $HOME', returnStdout: true).trim()
     } else {
-        homeDir = sh(script: 'echo %USERPROFILE%', returnStdout: true).trim()
+        homeDir = bat(script: 'echo %USERPROFILE%', returnStdout: true).trim()
     }
     
     // Construct path to kubeconfig
