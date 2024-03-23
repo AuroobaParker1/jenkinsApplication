@@ -29,7 +29,7 @@ pipeline {
             steps {
                 // Push Docker image to registry
                 script {
-                    docker.withRegistry('https://hub.docker.com/', '8ce1ad5a-4806-4f4d-b259-b22f9df7f851') {
+                    docker.withRegistry('https://hub.docker.com/repository/docker/auroobaparker/jenkinsapplication/general', '8ce1ad5a-4806-4f4d-b259-b22f9df7f851') {
                         docker.image("auroobaparker/jenkins-application:latest").push()
                     }
                 }
@@ -42,7 +42,7 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
-                        sh 'kubectl config set-context minikube --cluster=${KUBE_CLUSTER} --user=user'
+                        sh 'kubectl config set-context minikube --cluster=minikube --user=user'
                         sh 'kubectl config use-context minikube'
                         sh 'kubectl apply -f kubernetes/deployment.yaml -n default'
                         sh 'kubectl apply -f kubernetes/service.yaml -n default'
