@@ -19,24 +19,14 @@ pipeline {
         }
     
         
-        stage('Deploy') {
+         stage('Deploy') {
+            when {
+              expression {
+                currentBuild.result == null || currentBuild.result == 'SUCCESS' 
+              }
+            }
             steps {
-                // Deploy your application to Kubernetes
-                script {
-                    if (isUnix()) {
-                        sh 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
-                        sh 'kubectl config set-context minikube --cluster=minikube --user=minikube'
-                        sh 'kubectl config use-context minikube'
-                        sh 'kubectl apply -f kubernetes/deployment.yaml'
-                        sh 'kubectl rollout status deployment/jenkins-deployment'
-                    } else {
-                        bat 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
-                        bat 'kubectl config set-context minikube --cluster=minikube --user=minikube'
-                        bat 'kubectl config use-context minikube'
-                        bat 'kubectl apply -f kubernetes/deployment.yaml'
-                        bat 'kubectl rollout status deployment/jenkins-deployment'
-                    }
-                }
+                sh 'make publish'
             }
         }
     }
