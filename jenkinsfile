@@ -17,9 +17,9 @@ pipeline {
                 // Build your application (replace 'your-build-command' with your actual build command)
                 script {
                     if (isUnix()) {
-                        sh 'docker build -t ${DOCKER_REGISTRY}/jenkins-application:latest .'
+                        sh 'docker build -t auroobaparker/jenkins-application:latest .'
                     } else {
-                        bat 'docker build -t ${DOCKER_REGISTRY}/jenkins-application:latest .'
+                        bat 'docker build -t auroobaparker/jenkins-application:latest .'
                     }
                 }
             }
@@ -29,7 +29,7 @@ pipeline {
             steps {
                 // Push Docker image to registry
                 script {
-                    docker.withRegistry('https://${DOCKER_REGISTRY}', '8ce1ad5a-4806-4f4d-b259-b22f9df7f851') {
+                    docker.withRegistry('https://auroobaparker', '8ce1ad5a-4806-4f4d-b259-b22f9df7f851') {
                         docker.image("${DOCKER_REGISTRY}/jenkins-application:latest").push()
                     }
                 }
@@ -41,19 +41,19 @@ pipeline {
                 // Deploy your application to Kubernetes
                 script {
                     if (isUnix()) {
-                        sh 'kubectl config set-cluster ${KUBE_CLUSTER} --server=https://172.27.96.179:8443'
-                        sh 'kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=user'
-                        sh 'kubectl config use-context ${KUBE_CLUSTER}'
-                        sh 'kubectl apply -f kubernetes/deployment.yaml -n ${KUBE_NAMESPACE}'
-                        sh 'kubectl apply -f kubernetes/service.yaml -n ${KUBE_NAMESPACE}'
-                        sh 'kubectl rollout status deployment/jenkins-deployment -n ${KUBE_NAMESPACE}'
+                        sh 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
+                        sh 'kubectl config set-context minikube --cluster=${KUBE_CLUSTER} --user=user'
+                        sh 'kubectl config use-context minikube'
+                        sh 'kubectl apply -f kubernetes/deployment.yaml -n default'
+                        sh 'kubectl apply -f kubernetes/service.yaml -n default'
+                        sh 'kubectl rollout status deployment/jenkins-deployment -n default'
                     } else {
-                        bat 'kubectl config set-cluster ${KUBE_CLUSTER} --server=https://172.27.96.179:8443'
-                        bat 'kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=user'
-                        bat 'kubectl config use-context ${KUBE_CLUSTER}'
-                        bat 'kubectl apply -f kubernetes/deployment.yaml -n ${KUBE_NAMESPACE}'
-                        bat 'kubectl apply -f kubernetes/service.yaml -n ${KUBE_NAMESPACE}'
-                        bat 'kubectl rollout status deployment/jenkins-deployment -n ${KUBE_NAMESPACE}'
+                        bat 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
+                        bat 'kubectl config set-context minikube --cluster=${KUBE_CLUSTER} --user=user'
+                        bat 'kubectl config use-context minikube'
+                        bat 'kubectl apply -f kubernetes/deployment.yaml -n default'
+                        bat 'kubectl apply -f kubernetes/service.yaml -n default'
+                        bat 'kubectl rollout status deployment/jenkins-deployment -n default'
                     }
                 }
             }
