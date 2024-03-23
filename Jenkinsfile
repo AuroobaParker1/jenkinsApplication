@@ -24,7 +24,8 @@ pipeline {
       steps{
         script {
           withCredentials([usernamePassword(credentialsId: '8ce1ad5a-4806-4f4d-b259-b22f9df7f851', passwordVariable: 'admin@123', usernameVariable: 'auroobaparker')]){
-            dockerImage.push("latest")
+            docker tag dockerimagename 'auroobaparker/jenkins-kubernetes-deployment'
+            docker push 'auroobaparker/jenkins-kubernetes-deployment'
           }
         }
       }
