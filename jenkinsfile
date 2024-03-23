@@ -29,7 +29,7 @@ pipeline {
             steps {
                 // Push Docker image to registry
                 script {
-                    docker.withRegistry('https://hub.docker.com/repository/docker/auroobaparker', '8ce1ad5a-4806-4f4d-b259-b22f9df7f851') {
+                    docker.withRegistry('', '8ce1ad5a-4806-4f4d-b259-b22f9df7f851') {
                         docker.image("${DOCKER_REGISTRY}/jenkins-application:latest").push()
                     }
                 }
