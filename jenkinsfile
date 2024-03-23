@@ -32,7 +32,7 @@ pipeline {
                         sh 'kubectl rollout status deployment/jenkins-deployment --context minikube'
                     } else {
                         bat 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
-                        bat 'kubectl config set-context minikube --cluster=${KUBE_CLUSTER} --user=user'
+                        bat 'kubectl config set-context minikube --cluster=minikube --user=user'
                         bat 'kubectl config use-context minikube'
                         bat 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
                         bat 'kubectl apply -f kubernetes/service.yaml --context minikube'
