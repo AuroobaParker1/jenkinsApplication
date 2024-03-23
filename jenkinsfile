@@ -7,7 +7,7 @@ pipeline {
                 // Checkout your source code from repository
                 checkout scm
                 
-                // Build your application
+                // Build your application (replace 'your-build-command' with your actual build command)
                 script {
                     if (isUnix()) {
                         sh 'docker build -t auroobaparker/jenkins-application:latest .'
@@ -18,43 +18,28 @@ pipeline {
             }
         }
     
+        
         stage('Deploy') {
             steps {
                 // Deploy your application to Kubernetes
                 script {
-                    try {
-                        // Set KUBECONFIG environment variable
-                        def kubeconfig = findKubeconfig()
-                        withEnv(["KUBECONFIG=${kubeconfig}"]) {
-                            // Apply deployment and service YAML files
-                            bat 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
-                            bat 'kubectl apply -f kubernetes/service.yaml --context minikube'
-                            
-                            // Check rollout status
-                            bat 'kubectl rollout status deployment/jenkins-deployment --context minikube'
-                        }
-                    } catch (err) {
-                        // If any error occurs, catch and print the error message
-                        echo "Error occurred: ${err}"
-                        currentBuild.result = 'FAILED'
-                        error "Deployment failed"
+                    if (isUnix()) {
+                        sh 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
+                        sh 'kubectl config set-context minikube --cluster=minikube --user=minikube'
+                        sh 'kubectl config use-context minikube'
+                        sh 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
+                        sh 'kubectl apply -f kubernetes/service.yaml --context minikube'
+                        sh 'kubectl rollout status deployment/jenkins-deployment --context minikube'
+                    } else {
+                        bat 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
+                        bat 'kubectl config set-context minikube --cluster=minikube --user=minikube'
+                        bat 'kubectl config use-context minikube'
+                        bat 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
+                        bat 'kubectl apply -f kubernetes/service.yaml --context minikube'
+                        bat 'kubectl rollout status deployment/jenkins-deployment --context minikube'
                     }
                 }
             }
         }
     }
-}
-
-def findKubeconfig() {
-    // Determine home directory path based on OS
-    def homeDir
-    if (isUnix()) {
-        homeDir = sh(script: 'echo $HOME', returnStdout: true).trim()
-    } else {
-        homeDir = bat(script: 'echo %USERPROFILE%', returnStdout: true).trim()
-    }
-    
-    // Construct path to kubeconfig
-    def kubeconfig = "${homeDir}/.kube/config"
-    return kubeconfig
 }
