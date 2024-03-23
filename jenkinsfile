@@ -23,20 +23,21 @@ pipeline {
             steps {
                 // Deploy your application to Kubernetes
                 script {
-                    if (isUnix()) {
-                        sh 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
-                        sh 'kubectl config set-context minikube --cluster=minikube --user=minikube'
-                        sh 'kubectl config use-context minikube'
-                        sh 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
-                        sh 'kubectl apply -f kubernetes/service.yaml --context minikube'
-                        sh 'kubectl rollout status deployment/jenkins-deployment --context minikube'
-                    } else {
-                        bat 'kubectl config set-cluster minikube --server=https://172.27.96.179:8443'
-                        bat 'kubectl config set-context minikube --cluster=minikube --user=minikube'
-                        bat 'kubectl config use-context minikube'
-                        bat 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
-                        bat 'kubectl apply -f kubernetes/service.yaml --context minikube'
-                        bat 'kubectl rollout status deployment/jenkins-deployment --context minikube'
+                    try {
+                        // Explicitly set KUBECONFIG environment variable
+                        withEnv(["KUBECONFIG=$HOME/.kube/config"]) {
+                            // Apply deployment and service YAML files
+                            sh 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
+                            sh 'kubectl apply -f kubernetes/service.yaml --context minikube'
+                            
+                            // Check rollout status
+                            sh 'kubectl rollout status deployment/jenkins-deployment --context minikube'
+                        }
+                    } catch (err) {
+                        // If any error occurs, catch and print the error message
+                        echo "Error occurred: ${err}"
+                        currentBuild.result = 'FAILED'
+                        error "Deployment failed"
                     }
                 }
             }
