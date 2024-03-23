@@ -7,7 +7,7 @@ pipeline {
                 // Checkout your source code from repository
                 checkout scm
                 
-                // Build your application (replace 'your-build-command' with your actual build command)
+                // Build your application
                 script {
                     if (isUnix()) {
                         sh 'docker build -t auroobaparker/jenkins-application:latest .'
@@ -18,14 +18,14 @@ pipeline {
             }
         }
     
-        
         stage('Deploy') {
             steps {
                 // Deploy your application to Kubernetes
                 script {
                     try {
-                        // Explicitly set KUBECONFIG environment variable
-                        withEnv(["KUBECONFIG=$HOME/.kube/config"]) {
+                        // Set KUBECONFIG environment variable
+                        def kubeconfig = findKubeconfig()
+                        withEnv(["KUBECONFIG=${kubeconfig}"]) {
                             // Apply deployment and service YAML files
                             sh 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
                             sh 'kubectl apply -f kubernetes/service.yaml --context minikube'
@@ -43,4 +43,18 @@ pipeline {
             }
         }
     }
+}
+
+def findKubeconfig() {
+    // Determine home directory path based on OS
+    def homeDir
+    if (isUnix()) {
+        homeDir = sh(script: 'echo $HOME', returnStdout: true).trim()
+    } else {
+        homeDir = sh(script: 'echo %USERPROFILE%', returnStdout: true).trim()
+    }
+    
+    // Construct path to kubeconfig
+    def kubeconfig = "${homeDir}/.kube/config"
+    return kubeconfig
 }
