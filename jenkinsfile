@@ -35,7 +35,6 @@ pipeline {
                         bat 'kubectl config set-context minikube --cluster=minikube --user=minikube'
                         bat 'kubectl config use-context minikube'
                         bat 'kubectl apply -f kubernetes/deployment.yaml --context minikube'
-                        bat 'kubectl apply -f kubernetes/service.yaml --context minikube'
                         bat 'kubectl rollout status deployment/jenkins-deployment --context minikube'
                     }
                 }
