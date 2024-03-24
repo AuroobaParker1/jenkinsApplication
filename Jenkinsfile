@@ -31,7 +31,7 @@ pipeline {
     }
     stage('Deploy') {
       steps {
-        sh "kubectl apply -f k8/web-application.yaml -f k8/load-balancer.yaml"
+        sh "kubectl apply -f ./k8/web-application.yaml -f ./k8/load-balancer.yaml"
       }
     }
   }
