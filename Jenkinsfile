@@ -32,7 +32,7 @@ pipeline {
     }
     stage('Deploy') {
       steps {
-        bat "kubectl apply -f ./k8/web-application.yaml -f ./k8/load-balancer.yaml"
+        bat "kubectl apply -f ./k8/web-application.yaml -f ./k8/load-balancer.yaml -f ./k8/app-secret.yaml"
       }
     }
   }
