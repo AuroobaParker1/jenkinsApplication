@@ -1,22 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webapp-deployment
+  name: webapp
   labels:
     app: webapp
 spec:
   replicas: 1
   selector:
     matchLabels:
+      run: webapp
       app: webapp
   template:
     metadata:
       labels:
+        run: webapp
         app: webapp
     spec:
       containers:
         - name: webapp
-          image: us-central1-docker.pkg.dev/vocal-orbit-412510/iba-gar/todo-app:latest
+          image: auroobaparker/jenkinsapplication:latest
           ports:
             - containerPort: 3000
           env:
@@ -29,7 +31,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: webapp-service
+  name: webapp
 spec:
   type: NodePort
   selector:
