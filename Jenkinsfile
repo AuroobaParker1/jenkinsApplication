@@ -32,7 +32,7 @@ pipeline {
     }
     stage('Deploy') {
       steps {
-        bat "cat ${kubeconfig}" 
+        "type ${kubeconfig}"
         bat "kubectl apply -f ./k8/web-application.yaml -f ./k8/load-balancer.yaml"
       }
     }
