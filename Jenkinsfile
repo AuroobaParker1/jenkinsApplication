@@ -2,6 +2,7 @@ pipeline {
   environment {
     dockerimagename = "auroobaparker/jenkinsapplication"
     dockerImage = ""
+    KUBECONFIG = 'C:\Users\AuroobaParker\.kube\config'
   }
   agent any
   stages {
