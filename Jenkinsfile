@@ -2,7 +2,6 @@ pipeline {
   environment {
     dockerimagename = "auroobaparker/jenkinsapplication"
     dockerImage = ""
-    kubeconfig = "${HOME}/.kube/config"
   }
   agent any
   stages {
@@ -32,7 +31,6 @@ pipeline {
     }
     stage('Deploy') {
       steps {
-        "type ${kubeconfig}"
         bat "kubectl apply -f ./k8/web-application.yaml -f ./k8/load-balancer.yaml"
       }
     }
