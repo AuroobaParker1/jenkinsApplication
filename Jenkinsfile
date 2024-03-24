@@ -31,7 +31,10 @@ pipeline {
     }
     stage('Deploy') {
       steps {
-        bat "kubectl apply -f ./k8/web-application.yaml -f ./k8/load-balancer.yaml"
+        script {
+          kubernetesDeploy(configs: "k8/web-application.yaml", 
+                                         "k8/load-balancer.yaml")
+        }
       }
     }
   }
